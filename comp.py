@@ -80,3 +80,39 @@ lasso_grid_search.fit(X_train, y_train)
 best_lasso = lasso_grid_search.best_estimator_
 y_pred_lasso = best_lasso.predict(X_test)
 
+# Evaluate Linear Regression
+mse_lin = mean_squared_error(y_test, y_pred_lin)
+mae_lin = mean_absolute_error(y_test, y_pred_lin)
+r2_lin = r2_score(y_test, y_pred_lin)
+
+# Evaluate Lasso Regression
+mse_lasso = mean_squared_error(y_test, y_pred_lasso)
+mae_lasso = mean_absolute_error(y_test, y_pred_lasso)
+r2_lasso = r2_score(y_test, y_pred_lasso)
+
+# Evaluate Ridge Regression
+mse_ridge = mean_squared_error(y_test, y_pred_ridge)
+mae_ridge = mean_absolute_error(y_test, y_pred_ridge)
+r2_ridge = r2_score(y_test, y_pred_ridge)
+
+print(f"Linear Regression: MSE={mse_lin}, MAE={mae_lin}, R^2={r2_lin}")
+print(f"Lasso Regression: MSE={mse_lasso}, MAE={mae_lasso}, R^2={r2_lasso}")
+print(f"Ridge Regression: MSE={mse_ridge}, MAE={mae_ridge}, R^2={r2_ridge}")
+
+#Reformating the data 
+y_binary = (y > y.median()).astype(int)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y_binary, test_size=0.2, random_state=42)
+
+#Perform Logistic Regression
+logistic_model = LogisticRegression()
+logistic_model.fit(X_train, y_train)
+y_pred = logistic_model.predict(X_test)
+
+#Evaluate
+print("\nLogistic Regression:")
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("Precision:", precision_score(y_test, y_pred))
+print("Recall:", recall_score(y_test, y_pred))
+print("F1 Score:", f1_score(y_test, y_pred))
+print("ROC AUC:", roc_auc_score(y_test, logistic_model.predict_proba(X_test)[:, 1]))
