@@ -42,3 +42,27 @@ mean_occup = data_df['AveOccup'].mean()
 
 data_df['AveRooms'] = data_df['AveRooms'].fillna(mean_room)
 data_df['AveOccup'] = data_df['AveOccup'].fillna(mean_occup)
+
+#Feature Scaling
+scaler = StandardScaler()
+features = data_df.drop(columns=['MedHouseVal']) #droping the target so it stays the same
+target = data_df['MedHouseVal'] #storing the target 
+#print(target.head()) 
+
+scaled_features = scaler.fit_transform(features)
+df_scaled = pd.DataFrame(scaled_features, columns=features.columns) #turning the scaled data back to df
+df_scaled['MedHouseVal'] = data_df['MedHouseVal'] #adding the target col back 
+df_scaled.head()
+
+#Assaining the X and y values  
+X = df_scaled.drop(columns=['MedHouseVal'])
+y = df_scaled['MedHouseVal']
+
+#Divide the dataset into training (80%) and testing (20%) subsets.
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+#Train Linear Regression
+linear_model = LinearRegression()
+linear_model.fit(X_train, y_train)
+y_pred_lin = linear_model.predict(X_test)
+
+
