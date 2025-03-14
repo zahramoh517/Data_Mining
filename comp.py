@@ -116,3 +116,57 @@ print("Precision:", precision_score(y_test, y_pred))
 print("Recall:", recall_score(y_test, y_pred))
 print("F1 Score:", f1_score(y_test, y_pred))
 print("ROC AUC:", roc_auc_score(y_test, logistic_model.predict_proba(X_test)[:, 1]))
+
+# Confusion Matrix
+conf_matrix = confusion_matrix(y_test, y_pred)
+
+# Display Confusion Matrix
+plt.figure(figsize=(8, 6))
+sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=data.target_names, yticklabels=data.target_names)
+plt.xlabel('Predicted Labels')
+plt.ylabel('Actual Labels')
+plt.title('Confusion Matrix')
+plt.show()
+
+# Plot ROC Curve
+fpr, tpr, _ = roc_curve(y_test, logistic_model.predict_proba(X_test)[:, 1])
+plt.plot(fpr, tpr, label="Logistic Regression")
+plt.plot([0, 1], [0, 1], linestyle='--', color='gray')
+plt.xlabel("False Positive Rate")
+plt.ylabel("True Positive Rate")
+plt.title("ROC Curve")
+plt.legend()
+plt.show()
+
+ssd = []  # Sum of squared distances for Elbow Method
+for k in range(1, 11):
+    kmeans = KMeans(n_clusters=k, random_state=42)
+    kmeans.fit(X_scaled)
+    ssd.append(kmeans.inertia_) 
+
+#Plot the SSD against k
+plt.plot(range(1, 11), ssd, marker='o')
+plt.title('Elbow Method')
+plt.xlabel('Number of Clusters')
+plt.ylabel('Sum of Squared Distances')
+plt.show()
+
+kmeans = KMeans(n_clusters=2, random_state=42) #i think it's 3 
+kmeans_labels = kmeans.fit_predict(X)
+
+# Visualize clusters using PCA
+pca = PCA(n_components=2)
+pca_components = pca.fit_transform(X)
+plt.scatter(pca_components[:, 0], pca_components[:, 1], c=kmeans_labels, cmap='viridis')
+plt.title("K-Means Clustering")
+plt.xlabel("PCA Component 1")
+plt.ylabel("PCA Component 2")
+plt.show()
+
+#Gaussian Mixture Model Clustering
+gmm = GaussianMixture(n_components=2, random_state=42)
+y_gmm = gmm.fit_predict(X_scaled)
+
+#Evaluate
+print("Silhouette Score (K-Means):", silhouette_score(X, kmeans_labels))
+print("Silhouette Score (GMM):", silhouette_score(X, y_gmm))
