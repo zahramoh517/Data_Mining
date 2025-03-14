@@ -60,9 +60,23 @@ y = df_scaled['MedHouseVal']
 
 #Divide the dataset into training (80%) and testing (20%) subsets.
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
 #Train Linear Regression
 linear_model = LinearRegression()
 linear_model.fit(X_train, y_train)
 y_pred_lin = linear_model.predict(X_test)
 
+#Train Lasso Regression
+lasso = Lasso()
+lasso.fit(X_train, y_train)
+
+
+#Useing grid search (’alpha’: [0.01, 0.1, 1, 10]) and 5-fold cross-validation to tune hyperparameters
+param_grid = {'alpha': [0.01, 0.1, 1, 10]}
+lasso_grid_search = GridSearchCV(lasso, param_grid, cv=5, n_jobs=-1)
+lasso_grid_search.fit(X_train, y_train)
+
+#Finding the best alpha
+best_lasso = lasso_grid_search.best_estimator_
+y_pred_lasso = best_lasso.predict(X_test)
 
